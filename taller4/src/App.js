@@ -1,31 +1,48 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 
 export default function App() {
-  const { register, handleSubmit, errors } = useForm();
-  const onSubmit = data => {
+  const[autorizado, setAutorizado] = userState(false);
+
+  useEffect(() => {
+    renderizadoCondicional();
+  }, []);
+
+  function renderizadoCondicional(){
     axios
-    .post("http://localhost:4000/api/libros", data)
+    .post("http://localhost:4000/usuario/vigencia")
     .then(
       (response) => {
         console.log(response.data);
+        if(response.status == 200){
+          setAutorizado(true)
+        }
       }
     )
-    .catch((error) => {
-      console.log(error);
+    .catch((err) => {
+      if(err.response){
+        if(err.response.status == 401){
+          setAutorizado(false)
+        }
+      }
     });
   }
   console.log(errors);
   
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <input type="undefined" placeholder="nombre" name="nombre" ref={register} />
-      <input type="undefined" placeholder="autor" name="autor" ref={register} />
-      <input type="undefined" placeholder="ano_publicacion" name="ano_publicacion" ref={register} />
-      <input type="undefined" placeholder="idioma" name="idioma" ref={register} />
 
-      <input type="submit" />
-    </form>
+
+    <Router>
+      <Switch>
+        <Route path="/menu">
+          {autorizado ? <Principal /> :<SignIn />}
+        </Route>
+        <Route path="/">
+          <Signin />
+        </Route>
+      </Switch>
+    </Router>
+
   );
 }

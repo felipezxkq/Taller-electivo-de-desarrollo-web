@@ -22,7 +22,7 @@ app.use('/api',libro_routes);
 
 
 
-mongoose.connect('mongodb+srv://felipezxk:hola1234@cluster0.gutyj.mongodb.net/Taller?retryWrites=true&w=majority', (err, res) => {
+mongoose.connect('mongodb+srv://${process.env.USERDB}:${process.env.PASSBD}@${process.env.CLUSTER}?retryWrites=true&w=majority', (err, res) => {
 
     if(err){
         console.log("NO CONECTA")
